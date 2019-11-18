@@ -1,12 +1,10 @@
 package HTML::Mason::Plugin::Context;
-
 use strict;
 use warnings;
 
 #------------------------------------------------------------
 
 package HTML::Mason::Plugin::Context::StartRequest;
-
 use base qw(HTML::Mason::Plugin::Context);
 
 sub request   { $_[0]->[0] }
@@ -21,7 +19,6 @@ sub args      {
 #------------------------------------------------------------
 
 package HTML::Mason::Plugin::Context::EndRequest;
-
 use base qw(HTML::Mason::Plugin::Context);
 
 sub request   { $_[0]->[0] }
@@ -40,7 +37,6 @@ sub error     { $_[0]->[5] }
 #------------------------------------------------------------
 
 package HTML::Mason::Plugin::Context::StartComponent;
-
 use base qw(HTML::Mason::Plugin::Context);
 
 sub request   { $_[0]->[0] }
@@ -50,7 +46,6 @@ sub args      { $_[0]->[2] }
 #------------------------------------------------------------
 
 package HTML::Mason::Plugin::Context::EndComponent;
-
 use base qw(HTML::Mason::Plugin::Context);
 
 sub request   { $_[0]->[0] }

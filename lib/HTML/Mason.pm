@@ -5,6 +5,8 @@ package HTML::Mason;
 
 use 5.006;
 
+$HTML::Mason::VERSION = '1.42';
+
 use HTML::Mason::Interp;
 
 sub version
@@ -14,13 +16,11 @@ sub version
 
 1;
 
-# ABSTRACT: High-performance, dynamic web site authoring system
-
 __END__
 
-=pod
+=head1 NAME
 
-=encoding UTF-8
+Mason - High-performance, dynamic web site authoring system
 
 =head1 SYNOPSIS
 
@@ -30,17 +30,6 @@ __END__
         SetHandler perl-script
         PerlHandler HTML::Mason::ApacheHandler
     </Location>
-
-=head1 WAIT - HAVE YOU SEEN MASON 2?
-
-Version 1 of Mason (this distribution) -- has been around since 1998, is in
-wide use, and is very stable. However it has not changed much in years and
-is no longer actively developed.
-
-Version 2 of Mason -- L<Mason> -- was released in February of 2011. It offers
-a new syntax as well as a number of other features. See
-L<https://metacpan.org/pod/distribution/Mason/lib/Mason/Manual/UpgradingFromMason1.pod>
-for details of the differences between the two.
 
 =head1 DESCRIPTION
 
@@ -60,7 +49,7 @@ component per file. So-called "top-level" components represent entire
 web-pages, while smaller components typically return HTML snippets for
 embedding in top-level components. This object-like architecture
 greatly simplifies site maintenance: change a shared component, and
-you instantly changed all dependent pages that refer to it across a
+you instantly changed all dependant pages that refer to it across a
 site (or across many virtual sites).
 
 Mason's component syntax lets designers separate a web page into
@@ -178,18 +167,22 @@ Associates.  The book's website is at http://www.masonbook.com/.  This
 book goes into detail on a number of topics, and includes a chapter of
 recipes as well as a sample Mason-based website.
 
-=head1 GETTING HELP AND SOURCES
+=head1 AUTHORS
 
-Questions and feedback are welcome, and should be directed to the Mason
-mailing list. You must be subscribed to post.
+Jonathan Swartz <swartz@pobox.com>, Dave Rolsky <autarch@urth.org>, Ken Williams <ken@mathforum.org>, John Williams <williams@tni.com>
 
-    https://lists.sourceforge.net/lists/listinfo/mason-users
+=head1 COPYRIGHT
 
-You can also visit us at C<#mason> on L<irc://irc.perl.org/#mason>.
+Copyright (c) 1998-2005 Jonathan Swartz.  All rights reserved.  This
+program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
 
-Bugs and feature requests will be tracked at RT:
+The full text of the license can be found in the LICENSE file included
+with this module.
 
-    http://rt.cpan.org/NoAuth/Bugs.html?Dist=HTML-Mason
-    bug-html-mason@rt.cpan.org
+=head1 SEE ALSO
+
+L<HTML::Mason::Devel|HTML::Mason::Devel>,
+L<HTML::Mason::Admin|HTML::Mason::Admin>
 
 =cut

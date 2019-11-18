@@ -3,6 +3,10 @@ package HTML::Mason::Exceptions;
 use strict;
 use warnings;
 
+use vars qw($VERSION);
+
+$VERSION = 1.43;
+
 my %e;
 
 BEGIN

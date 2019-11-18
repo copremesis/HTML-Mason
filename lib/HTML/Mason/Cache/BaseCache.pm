@@ -3,7 +3,6 @@
 # under the same terms as Perl itself.
 
 package HTML::Mason::Cache::BaseCache;
-
 use strict;
 use warnings;
 

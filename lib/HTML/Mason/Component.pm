@@ -373,18 +373,6 @@ sub create_time {
     return $self->load_time(@_);
 }
 
-# Create logger on demand - generally called from $m->log
-sub logger {
-    my ($self) = @_;
-
-    if (!$self->{logger}) {
-        my $log_category = "HTML::Mason::Component" . $self->path();
-        $log_category =~ s/\//::/g;
-        $self->{logger} = Log::Any->get_logger(category => $log_category);
-    }
-    return $self->{logger};
-}
-
 1;
 
 __END__
@@ -634,5 +622,11 @@ Returns the source filename for this component.
 Returns the directory of the source filename for this component.
 
 =back
+
+=head1 SEE ALSO
+
+L<HTML::Mason|HTML::Mason>,
+L<HTML::Mason::Devel|HTML::Mason::Devel>,
+L<HTML::Mason::Request|HTML::Mason::Request>
 
 =cut

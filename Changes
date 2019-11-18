@@ -1,147 +1,9 @@
 Revision history for HTML::Mason.
 
+An HTML version of this file, complete with links to documentation, is
+available at http://www.masonhq.com/code/history.html.
+
 ** denotes an incompatible change
-
-{{$NEXT}}
-
-1.58     2017-10-29
-
-    - Redid the release because of some dzil issues. 1.57 might be a little
-      wonky.
-
-1.57     2017-10-29
-
-    [ BUG FIXES ]
-
-    - Fix test failures under 5.26.0+ due to "." no longer being in @INC. PR
-      By Kent Fredric. GH #6. Fixed RT #121443.
-
-1.56     2014-11-14
-
-    [ BUG FIXES ]
-
-    - Fix a packaging issue with the last release that prevented PAUSE from
-      indexing some modules in the tarball.
-
-1.55     2014-11-14
-
-    [ BUG FIXES ]
-
-    - Shut up warnings from recent versions of CGI.pm. Patch by Kevin
-      Falcone. GitHub PR #1.
-
-1.54  Jan 19, 2014
-
-    [ DISTRIBUTION ]
-
-    - Remake with gnutar
-
-1.53  Jan 18, 2014
-
-    [ DISTRIBUTION ]
-
-    - Attempt to fix corrupted tar
-
-1.52  Oct 9, 2013
-
-    [ BUG FIXES ]
-
-    - Ignore 'Software caused connection abort' errors. RT #49031. Submitted
-      by Morten Bjoernsvik.
-
-    - Sort hash keys to deal with Perl 5.18+ hash randomization. RT
-      #88708. Submitted by Zefram.
-
-    - Fix 'and' precedence with explicit parens. RT #87050. Submitted by
-      Alex Vandiver.
-
-    - Escape each part of substitution, not their
-      concatenation. github.com/jonswar/perl-HTML-Mason/pull/1. Submitted
-      by Ricardo Signes.
-
-    [ ENHANCEMENTS ]
-
-    - Add use_warnings flag, similar to
-      use_strict. github.com/jonswar/perl-HTML-Mason/pull/4. Submitted by
-      Aevar Bjarmason.
-
-1.51  May 8, 2013
-
-    [ DISTRIBUTION ]
-
-    - Fix hardcoded version
-
-    [DOCS]
-
-    - Add HTML::Mason::FAQ, from old masonhq.com website
-
-1.50 Jul 11, 2012
-
-    [ DISTRIBUTION ]
-
-    - Switch to Dist::Zilla
-    - Eliminate HTML docs from distribution, available on web
-    - Move live Apache tests to author-only
-
-1.49 Feb 27, 2012
-
-    [ DOCS ]
-
-    - Fixed misspellings in docs. RT #74676. Reported by Salvatore Bonaccorso.
-
-1.48 Feb 3, 2012
-
-    [ BUG FIXES ]
-
-    - Calling a subcomponent from inside an anonymous component (created via
-  $interp->make_component) caused an uninitialized value warning. Reported by
-  Javier Amor Garcia.
-
-1.47 Oct 21, 2011
-
-    [ BUG FIXES ]
-
-    - Silenced an uninitalized value warning from ApacheHandler with newer
-  versions of Perl. RT #61900.
-
-1.46 Aug 1, 2011
-
-    [ DOCS ]
-
-    - Mention Mason 2 in documentation
-
-1.45 Apr 3, 2010
-
-    [ BUG FIXES ]
-
-    - Silenced some new warnings that appeared when using Mason with Perl
-  5.12.0+. Reported by Jesse Vincent.
-
-1.44 Jan 4, 2010
-
-    [ ENHANCEMENTS ]
-
-    - Use Log::Any to log various events, such as the start and end of each
-  request and each component call.
-
-    - Add $m->log, allowing easy logging to a component-specific namespace.
-
-    - Fix use of CHI when no data directory is specified.
-
-1.43 Dec 25, 2009
-
-    [ BUG FIXES ]
-
-    - If a component was located in a patch with spaces, the feature which
-  referred to errors by their source file line number was broken. This could
-  cause test failures if the package was downloaded into a path with spaces by
-  CPAN. Reported by Shawn Moore. RT #53072.
-
-    - HTML::Entities is no longer an optional dependency. This fixes some issues
-  with packaged versions of Mason. Reported by Jens Rehsack. RT #48890.
-
-    - $m->flush_buffer is now ignored when inside $m->scomp or $m->content. Patch
-  by Frédéric Brière, with extra tests from Ruslan Zakirov. RT #38924.
 
 1.42 May 7, 2009
 
@@ -694,7 +556,7 @@ Revision history for HTML::Mason.
     - ** The semantics of @_ for components now match Perl subroutines: @_
       contains aliases to the caller's arguments, instead of copies.  For
       example, if a component updates $_[0], the corresponding argument is
-      updated (or an error occurs if it is not updateable). The only users
+      updated (or an error occurs if it is not updatable). The only users
       that will notice this are those that update elements of @_ in
       components and do not expect those changes to affect the caller. If
       you have any doubts, grep your component tree for '\$_\[' and look for
@@ -990,7 +852,7 @@ Revision history for HTML::Mason.
     - Unreadable component source files caused the confusing error message
       "source callback returned no source".  This will now throw a much more
       helpful exception.
-    - Errors occurring in subrequests would cause error output to be mixed
+    - Errors occuring in subrequests would cause error output to be mixed
       with regular output when the error_mode was "output" (the default with
       ApacheHandler and CGIHandler).  Errors in subrequests should now look
       the same as errors in the top request.
@@ -1063,7 +925,7 @@ Revision history for HTML::Mason.
 
     [ BUG FIXES ]
 
-    - Fixed a compilation error in HTML::Mason::Tools that was occurring
+    - Fixed a compilation error in HTML::Mason::Tools that was occuring
       with Perl 5.00503.
     - Made sure that <%method> and <%def> tags are treated
       case-insensitively.

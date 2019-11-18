@@ -1,6 +1,6 @@
-use strict;
-use warnings;
+#!/usr/bin/perl -w
 
+use strict;
 use File::Basename;
 use HTML::Mason::Tests;
 

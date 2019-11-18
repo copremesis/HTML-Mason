@@ -296,12 +296,12 @@ sub base_path
 
     if (ref $proto)
     {
-        $proto->{base_path} ||= File::Spec->catdir( cwd(), 'mason_tests', $$ );
+        $proto->{base_path} ||= File::Spec->catdir( cwd(), 'mason_tests' );
         return $proto->{base_path};
     }
     else
     {
-        return File::Spec->catdir( cwd(), 'mason_tests', $$ );
+        return File::Spec->catdir( cwd(), 'mason_tests' );
     }
 }
 
@@ -959,5 +959,9 @@ that overrides the _make_interp method to use your subclass:
             ( lexer_class => HTML::Mason::MyLexer,
               %interp_params );
     }
+
+=head1 SEE ALSO
+
+L<HTML::Mason|HTML::Mason>
 
 =cut

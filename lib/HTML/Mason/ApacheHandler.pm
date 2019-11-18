@@ -911,8 +911,7 @@ sub _apache_request_object
     my $new_r = APACHE2 ? $_[0] : HTML::Mason::Apache::Request->new( $_[0] );
 
     my $r_sub;
-    my $filter = $_[0]->dir_config('Filter');
-    if ( defined $filter && lc $filter eq 'on' )
+    if ( lc $_[0]->dir_config('Filter') eq 'on' )
     {
         die "To use Apache::Filter with Mason you must have at least version 1.021 of Apache::Filter\n"
             unless Apache::Filter->VERSION >= 1.021;
@@ -1017,12 +1016,8 @@ sub _set_mason_req_out_method
 
         # mod_perl-2 does not need to call $r->send_http_headers
         $out_method = sub {
-            eval {
-                $r->$final_output_method( grep { defined } @_ );
-                $r->rflush;
-            };
-            my $err = $@;
-            die $err if $err and $err !~ /Software caused connection abort/;
+            $r->$final_output_method( grep { defined } @_ );
+            $r->rflush;
         };
 
     } else {
@@ -1041,7 +1036,7 @@ sub _set_mason_req_out_method
             }
 
             # Call $r->print (using the real Apache method, not our
-            # overridden method).
+            # overriden method).
             $r->$final_output_method( grep {defined} @_ );
             $r->rflush;
         };
@@ -1176,7 +1171,7 @@ example:
 
 =head1 OTHER METHODS
 
-The ApacheHandler object has a few other publicly accessible methods
+The ApacheHandler object has a few other publically accessible methods
 that may be of interest to end users.
 
 =over 4
@@ -1227,5 +1222,11 @@ The third item may be a CGI.pm object or C<undef>, depending on the
 value of the L<args_method|HTML::Mason::Params/args_method> parameter.
 
 =back
+
+=head1 SEE ALSO
+
+L<HTML::Mason|HTML::Mason>,
+L<HTML::Mason::Admin|HTML::Mason::Admin>,
+L<HTML::Mason::Interp|HTML::Mason::Interp>
 
 =cut

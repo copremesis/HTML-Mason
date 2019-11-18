@@ -1,6 +1,6 @@
-use strict;
-use warnings;
+#!/usr/bin/perl -w
 
+use strict;
 use HTML::Mason::CGIHandler;
 use CGI qw(-no_debug);  # Prevent "(offline mode: enter name=value pairs on standard input)"
 
@@ -29,7 +29,7 @@ use CGI qw(-no_debug);  # Prevent "(offline mode: enter name=value pairs on stan
              %interp_params,
             );
         
-        eval { local $CGI::LIST_CONTEXT_WARN = 0; $self->_execute($interp) };
+        eval { $self->_execute($interp) };
         
         return $self->check_result($@);
     }

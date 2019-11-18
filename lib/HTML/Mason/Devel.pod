@@ -259,7 +259,7 @@ in strange and mysterious ways.
 =head2 Component Objects
 
 Mason provides an object API for components, allowing you to query a
-component's various associated files, arguments, etc. For a description
+component's various asociated files, arguments, etc. For a description
 of all methods see
 B<L<HTML::Mason::Component|HTML::Mason::Component>>.  Typically you
 get a handle on a component object from request methods like C<<
@@ -591,7 +591,7 @@ C<exec> method to execute it, which takes exactly the same parameters
 as the C<comp> method.
 
 Since subrequests inherit their parent request's parameters, output
-from a component called via a subrequest goes to the same destination
+from a component called via a subrequest goes to the same desintation
 as output from components called during the parent request.  Of course,
 you can change this.
 
@@ -940,7 +940,7 @@ In Mason 1.21 and beyond, this unnecessary copying was eliminated and
 @_ now contains I<aliases> to the caller's arguments, just as with
 regular Perl subroutines. For example, if a component updates $_[0],
 the corresponding argument is updated (or an error occurs if it is not
-updateable).
+updatable).
 
 Most users won't notice this change because C<< <%args> >> variables
 and the C<%ARGS> hash always contain copies of arguments.
@@ -1317,7 +1317,7 @@ Anything between these two lines
    % }
 
 will be skipped by Mason, including component calls.  While we don't
-recommend this for comments per se, it is a useful notation for
+recomend this for comments per se, it is a useful notation for
 "commenting out" code that you don't want to run.
 
 =head2 HTML/XML/... comments
@@ -1513,14 +1513,13 @@ under special circumstances, one component does not access another
 component's cache. Each cached value may be set to expire at a certain
 time.
 
-Data caching is implemented on top of one of two external caching APIs:
-C<Cache::Cache>, which is stable but has not changed in years, or C<CHI>,
-which has picked up where C<Cache::Cache> has left off and is actively
-maintained. You control which one Mason uses with the L<data_cache_api|HTML::Mason::Params/data_cache_api>
-parameter.  C<Cache::Cache> is the default for backward compatibility
-reasons, but we recommend C<CHI> for anyone doing serious caching.  The APIs
-are very similar for Mason users, so that most of the information below
-applies to both; any differences are noted.
+Data caching is implemented on top of one of two external caching
+APIs: C<Cache::Cache> or its newer sibling C<CHI>. You control which
+one Mason uses with the L<data_cache_api|HTML::Mason::Params/data_cache_api> parameter. Currently
+C<Cache::Cache> is the default, but we will switch to C<CHI> once it
+is more mature.  The APIs are very similar for Mason users, so that
+most of the information below applies to both; any differences are
+noted.
 
 =head2 Basic Usage
 
@@ -1928,20 +1927,6 @@ on your task, this can be a help or a hindrance when using the
 debugger.  The administrator can turn off '#line' directives with
 the L<use_source_line_numbers|HTML::Mason::Params/use_source_line_numbers> parameter.
 
-=head1 LOGGING
-
-Mason uses C<Log::Any> to log various events, such as the start and
-end of each request and each component call. You can also log to
-C<Log::Any> from a component with the
-C<$m-E<gt>log> method. e.g.
-
-    $m->log->error("Something bad happened!");
-    $m->log->debugf("Arguments for '%s' were '%s'", $func, \%args)
-        if $m->log->is_debug;
-
-See C<Log::Any::Adapter> for how to direct these logs to
-an output of your choice.
-
 =head1 OBJECT-ORIENTED TECHNIQUES
 
 Earlier you learned how to assign a common template to an entire
@@ -2231,5 +2216,15 @@ initialize the object from %ARGS:
 Modules which work as source filters, such as C<Switch.pm>, will only
 work when you are using object files.  This is because of how source
 filters are implemented, and cannot be changed by the Mason authors.
+
+=head1 AUTHORS
+
+Jonathan Swartz <swartz@pobox.com>, Dave Rolsky <autarch@urth.org>, Ken Williams <ken@mathforum.org>
+
+=head1 SEE ALSO
+
+L<HTML::Mason|HTML::Mason>,
+L<HTML::Mason::Admin|HTML::Mason::Admin>,
+L<HTML::Mason::Request|HTML::Mason::Request>
 
 =cut

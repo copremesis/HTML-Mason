@@ -707,7 +707,7 @@ documentation for C<Cache::Cache> as well as for relevant subclasses
 =item Cache files
 
 By default, C<Cache::FileCache> is the subclass used for data caching,
-although this may be overridden by the developer. C<Cache::FileCache>
+although this may be overriden by the developer. C<Cache::FileCache>
 creates a separate subdirectory for every component that uses caching,
 and one file some number of levels underneath that subdirectory for
 each cached item.  The root of the cache tree is
@@ -794,7 +794,7 @@ The object file pathname is formed from three parts:
 
 =over
 
-=item * the compiler C<object_id> -
+=item * the compiler L<object_id|HTML::Mason::Compiler/object_id> -
 this prevents different versions of Mason or compilers from using the same
 object file, such as after an upgrade
 
@@ -1071,7 +1071,7 @@ The relevant portions of the F<httpd.conf> file look like:
 This simply causes Apache to call the mason_handler.cgi script every
 time a URL ending in ".html" under the component root is requested.
 
-To exclude certain directories from being under Mason control, you can
+To exclude certian directories from being under Mason control, you can
 use something like the following:
 
     <LocationMatch "^/(dir1|dir2|dir3)/">
@@ -1123,5 +1123,17 @@ sending to standard output:
     $interp->exec(<component-path>, <args>...);
 
     # Do something with $outbuf
+
+=head1 AUTHORS
+
+Jonathan Swartz <swartz@pobox.com>, Dave Rolsky <autarch@urth.org>, Ken Williams <ken@mathforum.org>
+
+=head1 SEE ALSO
+
+L<HTML::Mason|HTML::Mason>,
+L<HTML::Mason::Interp|HTML::Mason::Interp>,
+L<HTML::Mason::ApacheHandler|HTML::Mason::ApacheHandler>,
+L<HTML::Mason::Lexer|HTML::Mason::Lexer>,
+L<HTML::Mason::Compiler|HTML::Mason::Compiler>
 
 =cut
