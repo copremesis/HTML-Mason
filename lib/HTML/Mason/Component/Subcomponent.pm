@@ -31,9 +31,7 @@ sub assign_runtime_properties {
     $self->SUPER::assign_runtime_properties($interp, $source);
     $self->{comp_id} = sprintf("[%s '%s' of %s]", $self->{is_method} ? 'method' : 'subcomponent',
                                $self->name, $self->owner->comp_id);
-    my $owner_path = $self->owner->path;
-    $owner_path = q{} unless defined $owner_path;
-    $self->{path} =  $owner_path . ":" . $self->name;
+    $self->{path} = $self->owner->path . ":" . $self->name;
 }
 
 sub cache_file { return $_[0]->owner->cache_file }
@@ -82,5 +80,9 @@ Returns the component object within which this subcomponent or method
 was defined.
 
 =back
+
+=head1 SEE ALSO
+
+L<HTML::Mason::Component|HTML::Mason::Component>
 
 =cut

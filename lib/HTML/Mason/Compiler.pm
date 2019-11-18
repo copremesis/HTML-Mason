@@ -117,10 +117,10 @@ sub compute_object_id
           grep { $_ ne 'container' } keys %$spec );
 
     my @vals = ('HTML::Mason::VERSION', $HTML::Mason::VERSION);
-    foreach my $k ( sort @id_keys ) {
+    foreach my $k ( @id_keys ) {
         push @vals, $k, $self->{$k};
     }
-    my $dumped_vals = Data::Dumper->new(\@vals)->Indent(0)->Sortkeys(1)->Dump;
+    my $dumped_vals = Data::Dumper->new(\@vals)->Indent(0)->Dump;
     $self->{object_id} = checksum($dumped_vals);
 }
 
@@ -137,7 +137,7 @@ sub add_allowed_globals
         param_error "add_allowed_globals: bad parameters '@bad', must begin with one of \$, \@, %\n";
     }
 
-    $self->{allow_globals} = [ sort keys %{ { map { $_ => 1 } @globals, @{ $self->{allow_globals} } } } ];
+    $self->{allow_globals} = [ keys %{ { map { $_ => 1 } @globals, @{ $self->{allow_globals} } } } ];
     return @{ $self->{allow_globals} };
 }
 
@@ -295,11 +295,11 @@ sub raw_block
     return $self->$method(%p) if $self->can($method);
 
     my $comment = '';
-    if ( $self->lexer->line_number && $self->use_source_line_numbers )
+    if ( $self->lexer->line_number )
     {
         my $line = $self->lexer->line_number;
-        my $file = $self->_escape_filename( $self->lexer->name );
-        $comment = qq{#line $line "$file"\n};
+        my $file = $self->lexer->name;
+        $comment = "#line $line $file\n" if $self->use_source_line_numbers;
     }
 
     push @{ $self->{current_compile}{blocks}{ $p{block_type} } }, "$comment$p{block}";
@@ -492,8 +492,7 @@ sub substitution
               grep { $_ ne 'n' } @flags
             );
 
-        $text = "(map {; \$m->interp->apply_escapes(\$_, $flags) } ($text))"
-          if $flags;
+        $text = "\$m->interp->apply_escapes( (join '', ($text)), $flags )" if $flags;
     }
 
     my $code;
@@ -629,25 +628,14 @@ sub _add_body_code
     # can break certain constructs like qw() list that spans multiple
     # perl-lines.
     if ( $self->lexer->line_number &&
-         $self->{current_compile}{last_body_code_type} ne 'perl_line' &&
-         $self->use_source_line_numbers )
+         $self->{current_compile}{last_body_code_type} ne 'perl_line' )
     {
         my $line = $self->lexer->line_number;
-        my $file = $self->_escape_filename( $self->lexer->name );
-        $self->{current_compile}{body} .= qq{#line $line "$file"\n};
+        my $file = $self->lexer->name;
+        $self->{current_compile}{body} .= "#line $line $file\n" if $self->use_source_line_numbers;
     }
 
     $self->{current_compile}{body} .= $_ foreach @_;
-}
-
-sub _escape_filename
-{
-    my $self = shift;
-    my $file = shift;
-
-    $file =~ s/\"//g;
-
-    return $file;
 }
 
 sub dump
@@ -982,5 +970,13 @@ Called by the Lexer when it encounters a C<%>-line.
 We recommend that any parameters you add to Compiler be read-only,
 because the compiler object_id is only computed once on creation
 and would not reflect any changes to Lexer parameters.
+
+=cut
+
+=head1 SEE ALSO
+
+L<HTML::Mason|HTML::Mason>,
+L<HTML::Mason::Admin|HTML::Mason::Admin>,
+L<HTML::Mason::Interp|HTML::Mason::Interp>
 
 =cut

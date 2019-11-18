@@ -1,5 +1,6 @@
+#!/usr/bin/perl -w
+
 use strict;
-use warnings;
 
 use File::Spec;
 use HTML::Mason::Tests;
@@ -45,13 +46,13 @@ EOF
 
     $group->add_test( name => 'no autohandlers',
                       description => 'tests turning off autohandlers by setting name to ""',
-                      call_path => '/autohandler_test/subdir/off',
+                      call_path => '/autohandler_test/subdir/hello',
                       interp_params => { autohandler_name => '' },
                       component => <<'EOF',
-Hello World!  Autohandlers are <% $m->interp->use_autohandlers ? 'on' : 'off' %>
+Hello World!
 EOF
                       expect => <<'EOF',
-Hello World!  Autohandlers are off
+Hello World!
 EOF
                     );
 
@@ -463,19 +464,6 @@ EOF
                       expect_error => qr{could not find component},
                     );
 
-#------------------------------------------------------------
-
-    $group->add_test( name => 'no dhandlers',
-                      description => 'tests turning off dhandlers by setting name to ""',
-                      call_path => 'dhandler_test/exists',
-                      interp_params => { dhandler_name => '' },
-                      component => <<'EOF',
-Hello World!  dhandlers are <% $m->use_dhandlers ? 'on' : 'off' %>
-EOF
-                      expect => <<'EOF',
-Hello World!  dhandlers are off
-EOF
-                    );
 
 #------------------------------------------------------------
 
@@ -799,7 +787,7 @@ EOF
                       component => <<'EOF',
 % my $buffer;
 % my $interp = HTML::Mason::Tests->tests_class->_make_interp( out_method => \$buffer );
-% $interp->exec( "/mason_tests/$$/comps/interp/no_comp_root_helper" );
+% $interp->exec( '/mason_tests/comps/interp/no_comp_root_helper' );
 <% $buffer %>
 EOF
                       expect => <<'EOF',
@@ -820,7 +808,7 @@ EOF
 
 #------------------------------------------------------------
 
-    if ( $] < 5.012 && load_pkg('Switch') )
+    if ( load_pkg('Switch') )
     {
         $group->add_test( name => 'source_filter',
                           description => 'make sure source filters work',

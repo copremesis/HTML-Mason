@@ -1,6 +1,6 @@
-use strict;
-use warnings;
+#!/usr/bin/perl -w
 
+use strict;
 use HTML::Mason::Tests;
 
 my $tests = make_tests();

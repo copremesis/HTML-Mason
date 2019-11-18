@@ -40,7 +40,6 @@ use HTML::Mason::Cache::BaseCache;
 use HTML::Mason::Plugin::Context;
 use HTML::Mason::Tools qw(can_weaken read_file compress_path load_pkg pkg_loaded absolute_comp_path);
 use HTML::Mason::Utils;
-use Log::Any qw($log);
 use Class::Container;
 use base qw(Class::Container);
 
@@ -242,8 +241,6 @@ sub _initialize {
         if (!ref($request_comp)) {
             $request_comp =~ s{/+}{/}g;
             $self->{top_path} = $path = $request_comp;
-            $log->debugf("top path is '%s'", $self->{top_path})
-                if $log->is_debug;
 
             my $retry_count = 0;
             search: {
@@ -256,8 +253,6 @@ sub _initialize {
                     if ( $request_comp = $self->interp->find_comp_upwards($path, $self->dhandler_name) ) {
                         my $parent_path = $request_comp->dir_path;
                         ($self->{dhandler_arg} = $self->{top_path}) =~ s{^$parent_path/?}{};
-                        $log->debugf("found dhandler '%s', dhandler_arg '%s'", $parent_path, $self->{dhandler_arg})
-                            if $log->is_debug;
                     }
                 }
 
@@ -311,7 +306,7 @@ sub _initialize {
                     #
                     {
                         no strict 'refs';
-                        unless (keys %{$plugin . "::"}) {
+                        unless (defined(%{$plugin . "::"})) {
                             eval "use $plugin;";
                             die $@ if $@;
                         }
@@ -343,7 +338,7 @@ sub _initialize {
 sub use_dhandlers
 {
     my $self = shift;
-    return (defined $self->{dhandler_name} and length $self->{dhandler_name});
+    return defined $self->{dhandler_name} and length $self->{dhandler_name};
 }
 
 sub alter_superclass
@@ -427,9 +422,6 @@ sub exec {
     $self->{request_buffer} = $self->interp->preallocated_output_buffer;
     $self->{request_buffer} = '';
 
-    $log->debugf("starting request for '%s'", $self->request_comp->title)
-        if $log->is_debug;
-
     eval {
         # Build wrapper chain and index.
         my $request_comp = $self->request_comp;
@@ -458,7 +450,7 @@ sub exec {
             tie *SELECTED, 'Tie::Handle::Mason';
 
             my $old = select SELECTED;
-            my $mods = {base_comp => $request_comp, store => \($self->{request_buffer}), flushable => 1};
+            my $mods = {base_comp => $request_comp, store => \($self->{request_buffer})};
 
             if ($self->{has_plugins}) {
                 my $context = bless
@@ -505,9 +497,6 @@ sub exec {
             rethrow_exception $error;
         }
     };
-
-    $log->debugf("finishing request for '%s'", $self->request_comp->title)
-        if $log->is_debug;
 
     # Purge code cache if necessary.
     $self->interp->purge_code_cache;
@@ -679,9 +668,8 @@ sub cache
         if (!exists($options{namespace})) {
             $options{namespace} = $self->current_comp->comp_id;
         }
-        if (!exists($options{driver}) && !exists($options{driver_class})) {
+        if (!exists($options{driver})) {
             $options{driver} = $self->interp->cache_dir ? 'File' : 'Memory';
-            $options{global} = 1 if $options{driver} eq 'Memory';            
         }
         $options{root_dir} ||= $self->interp->cache_dir;
         return $chi_root_class->new(%options);
@@ -1219,7 +1207,6 @@ sub print
 #
 sub comp {
     my $self = shift;
-    my $log_is_debug = $log->is_debug;
 
     # Get modifiers: optional hash reference passed in as first argument.
     # Merge multiple hash references to simplify user and internal usage.
@@ -1246,18 +1233,13 @@ sub comp {
     error "$depth levels deep in component stack (infinite recursive call?)\n"
         if $depth >= $self->{max_recurse};
 
-    # Log start of component call.
-    #
-    $log->debugf("entering component '%s' [depth %d]", $comp->title(), $depth)
-        if $log_is_debug;
-
     # Keep the same output buffer unless store modifier was passed. If we have
     # a filter, put the filter buffer on the stack instead of the regular buffer.
     #
     my $filter_buffer = '';
     my $top_buffer = defined($mods{store}) ? $mods{store} : $self->{top_stack}->[STACK_BUFFER];
     my $stack_buffer = $comp->{has_filter} ? \$filter_buffer : $top_buffer;
-    my $flushable = exists $mods{flushable} ? $mods{flushable} : ($self->{top_stack}->[STACK_BUFFER_IS_FLUSHABLE] && ! defined($mods{store})) ;
+    my $flushable = exists $mods{flushable} ? $mods{flushable} : 1;
 
     # Add new stack frame and point dynamically scoped $self->{top_stack} at it.
     push @{ $self->{stack} },
@@ -1336,11 +1318,6 @@ sub comp {
     # they don't get cleaned up until the component exits.
     pop @{ $self->{stack} };
 
-    # Log end of component call.
-    #
-    $log->debug(sprintf("exiting component '%s' [depth %d]", $comp->title(), $depth))
-        if $log_is_debug;
-
     # Repropagate error if one occurred, otherwise return result.
     rethrow_exception $error if $error;
     return $wantarray ? @result : $result[0];
@@ -1352,7 +1329,7 @@ sub comp {
 sub scomp {
     my $self = shift;
     my $buf;
-    $self->comp({store => \$buf},@_);
+    $self->comp({store => \$buf, flushable => 0},@_);
     return $buf;
 }
 
@@ -1452,6 +1429,15 @@ sub request_args
 *top_args = \&request_args;
 *top_comp = \&request_comp;
 
+# deprecated in 1.1x
+sub time
+{
+    my ($self) = @_;
+    my $time = $self->interp->current_time;
+    $time = time() if $time eq 'real';
+    return $time;
+}
+
 #
 # Subroutine called by every component while in debug mode, convenient
 # for breakpointing.
@@ -1539,12 +1525,6 @@ sub _compute_base_comp_for_frame {
         $frame->[STACK_BASE_COMP] = $base_comp;
     }
     return $frame->[STACK_BASE_COMP];
-}
-
-sub log
-{
-    my ($self) = @_;
-    return $self->current_comp->logger();
 }
 
 package Tie::Handle::Mason;
@@ -1680,7 +1660,7 @@ To use the CHI C<FastMmap> driver by default:
     data_cache_api      => 'CHI',
     data_cache_defaults => {driver => 'FastMmap'},
 
-These settings are overridden by options given to particular
+These settings are overriden by options given to particular
 C<$m-E<gt>cache> calls.
 
 =item dhandler_name
@@ -1900,7 +1880,7 @@ cache class. e.g. for C<FileCache>, valid options include C<default_expires_in> 
 C<cache_depth>.
 
 See L<HTML::Mason::Cache::BaseCache|HTML::Mason::Cache::BaseCache> for
-information about the object returned from C<$m-E<gt>cache>.
+information about the object returend from C<$m-E<gt>cache>.
 
 =item If data_cache_api = CHI
 
@@ -2097,7 +2077,7 @@ Note that we ignore both the original and the final return value.
     }
     ...
 
-Here is a piece of code that traps all errors occurring anywhere in a
+Here is a piece of code that traps all errors occuring anywhere in a
 component or its children, e.g. for the purpose of handling
 application-specific exceptions. This is difficult to do with a manual
 C<eval> because it would have to span multiple code sections and the
@@ -2333,14 +2313,6 @@ relative to the current component.
 
 See the L<subrequests|HTML::Mason::Devel/subrequests> section of the developer's manual for more information about subrequests.
 
-=item log
-
-=for html <a name="item_log"></a>
-
-Returns a C<Log::Any> logger with a log category specific to the
-current component.  The category for a component "/foo/bar" would be
-"HTML::Mason::Component::foo::bar".
-
 =item notes (key, value)
 
 =for html <a name="notes"></a>
@@ -2531,5 +2503,15 @@ exceptions, like this:
   # handle other exceptions
 
 =back
+
+=head1 AUTHORS
+
+Jonathan Swartz <swartz@pobox.com>, Dave Rolsky <autarch@urth.org>, Ken Williams <ken@mathforum.org>
+
+=head1 SEE ALSO
+
+L<HTML::Mason|HTML::Mason>,
+L<HTML::Mason::Devel|HTML::Mason::Devel>,
+L<HTML::Mason::Component|HTML::Mason::Component>
 
 =cut

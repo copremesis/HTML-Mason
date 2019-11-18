@@ -46,10 +46,6 @@ BEGIN
          { parse => 'boolean', type => SCALAR, default => 1,
            descr => "Whether to turn on Perl's 'strict' pragma in components" },
 
-         use_warnings =>
-         { parse => 'boolean', type => SCALAR, default => 0,
-           descr => "Whether to turn on Perl's 'warnings' pragma in components" },
-
          define_args_hash =>
          { parse => 'string', type => SCALAR, default => 'auto',
            regex => qr/^(?:always|auto|never)$/,
@@ -71,7 +67,6 @@ use HTML::Mason::MethodMaker
                         preamble
                         subcomp_class
                         use_strict
-                        use_warnings
                         )
                     ],
       );
@@ -305,7 +300,6 @@ sub _make_main_header
 
     return join '', ( "package $pkg;\n",
                       $self->use_strict ? "use strict;\n" : "no strict;\n",
-                      $self->use_warnings ? "use warnings;\n" : "",
                       sprintf( "use vars qw(\%s);\n",
                                join ' ', '$m', $self->allow_globals ),
                       $self->_blocks('once'),
@@ -523,11 +517,8 @@ EOF
             $coerce = $arg_in_array;
         }
 
-        if ( defined $_->{line} && defined $_->{file} && $self->use_source_line_numbers )
-        {
-            my $file = $self->_escape_filename( $_->{file} );
-            push @assign, qq{#line $_->{line} "$file"\n};
-        }
+        push @assign, "#line $_->{line} $_->{file}\n"
+            if defined $_->{line} && defined $_->{file} && $self->use_source_line_numbers;
 
         if ( defined $_->{default} )
         {
@@ -695,11 +686,6 @@ C<$m> in postamble code.
 
 True or false, default is true. Indicates whether or not a given
 component should C<use strict>.
-
-=item use_warnings
-
-True or false, default is false. Indicates whether or not a given
-component should C<use warnings>.
 
 =item named_component_subs
 

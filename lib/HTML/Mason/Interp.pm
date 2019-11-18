@@ -649,7 +649,6 @@ sub set_global
 
     my $varname = sprintf("%s::%s",$self->compiler->in_package,$name);
     no strict 'refs';
-    no warnings 'once';
     if ($prefix eq '$') {
         $$varname = $values[0];
     } elsif ($prefix eq '@') {
@@ -862,7 +861,7 @@ sub object_file {
 sub use_autohandlers
 {
     my $self = shift;
-    return (defined $self->{autohandler_name} and length $self->{autohandler_name});
+    return defined $self->{autohandler_name} and length $self->{autohandler_name};
 }
 
 # Generate HTML that describes Interp's current status.
@@ -1437,5 +1436,11 @@ L<allow_globals|HTML::Mason::Params/allow_globals> parameter; otherwise you'll g
 C<strict>.
 
 =back
+
+=head1 SEE ALSO
+
+L<HTML::Mason|HTML::Mason>,
+L<HTML::Mason::Admin|HTML::Mason::Admin>,
+L<HTML::Mason::ApacheHandler|HTML::Mason::ApacheHandler>
 
 =cut
